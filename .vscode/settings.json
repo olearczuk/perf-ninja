@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "algorithm": "cpp"
+    },
+    "vim.handleKeys": {
+        "<C-n>": false,
+    },
+    "cmake.sourceDirectory": "/home/olearczuk/github/perf-ninja/labs/core_bound/vectorization_1",
+    "nerdtree.hideSidebarWhenOpenFile": false,
+    "nerdtree.alwaysShowSidebar": true,
+}
