@@ -27,37 +27,37 @@ Lab assignments in this project are implemented in C++. Also, Performance Ninja 
 ## Lab assignments
 
 * Core Bound:
-  * [Vectorization 1](labs/core_bound/vectorization_1)
-  * [Vectorization 2](labs/core_bound/vectorization_2)
-  * [Function Inlining](labs/core_bound/function_inlining_1)
-  * [Dependency Chains 1](labs/core_bound/dep_chains_1)
-  * [Dependency Chains 2](labs/core_bound/dep_chains_2)
-  * [Compiler Intrinsics 1](labs/core_bound/compiler_intrinsics_1)
-  * [Compiler Intrinsics 2](labs/core_bound/compiler_intrinsics_2)
-  * [Compiler Intrinsics 3](labs/core_bound/compiler_intrinsics_3)
-  * [Compiler Intrinsics 4](labs/core_bound/compiler_intrinsics_4)
+  * [x] [Vectorization 1](labs/core_bound/vectorization_1)
+  * [x] [Vectorization 2](labs/core_bound/vectorization_2)
+  * [x] [Function Inlining](labs/core_bound/function_inlining_1)
+  * [x] [Dependency Chains 1](labs/core_bound/dep_chains_1)
+  * [ ] [Dependency Chains 2](labs/core_bound/dep_chains_2)
+  * [ ] [Compiler Intrinsics 1](labs/core_bound/compiler_intrinsics_1)
+  * [ ] [Compiler Intrinsics 2](labs/core_bound/compiler_intrinsics_2)
+  * [ ] [Compiler Intrinsics 3](labs/core_bound/compiler_intrinsics_3)
+  * [ ] [Compiler Intrinsics 4](labs/core_bound/compiler_intrinsics_4)
 * Memory Bound:
-  * [Data Packing](labs/memory_bound/data_packing)
-  * [Loop Interchange 1](labs/memory_bound/loop_interchange_1)
-  * [Loop Interchange 2](labs/memory_bound/loop_interchange_2)
-  * [Loop Tiling](labs/memory_bound/loop_tiling_1)
-  * [SW memory prefetching](labs/memory_bound/swmem_prefetch_1)
-  * [False Sharing](labs/memory_bound/false_sharing_1)
-  * [Huge Pages](labs/memory_bound/huge_pages_1)
-  * [Memory Order Violation](labs/memory_bound/mem_order_violation_1)
-  * [Memory Alignment](labs/memory_bound/mem_alignment_1)
+  * [ ] [Data Packing](labs/memory_bound/data_packing)
+  * [ ] [Loop Interchange 1](labs/memory_bound/loop_interchange_1)
+  * [ ] [Loop Interchange 2](labs/memory_bound/loop_interchange_2)
+  * [ ] [Loop Tiling](labs/memory_bound/loop_tiling_1)
+  * [ ] [SW memory prefetching](labs/memory_bound/swmem_prefetch_1)
+  * [ ] [False Sharing](labs/memory_bound/false_sharing_1)
+  * [ ] [Huge Pages](labs/memory_bound/huge_pages_1)
+  * [ ] [Memory Order Violation](labs/memory_bound/mem_order_violation_1)
+  * [ ] [Memory Alignment](labs/memory_bound/mem_alignment_1)
 * Bad Speculation:
-  * [Branches To CMOVs](labs/bad_speculation/branches_to_cmov_1)
-  * [Conditional Store](labs/bad_speculation/conditional_store_1)
-  * [Replacing Branches With Lookup Tables](labs/bad_speculation/lookup_tables_1)
-  * [C++ Virtual Calls](labs/bad_speculation/virtual_call_mispredict)
+  * [ ] [Branches To CMOVs](labs/bad_speculation/branches_to_cmov_1)
+  * [ ] [Conditional Store](labs/bad_speculation/conditional_store_1)
+  * [ ] [Replacing Branches With Lookup Tables](labs/bad_speculation/lookup_tables_1)
+  * [ ] [C++ Virtual Calls](labs/bad_speculation/virtual_call_mispredict)
 * CPU Frontend Bound:
 * Data-Driven optimizations:
 * Misc:
-  * [Warmup](labs/misc/warmup)
-  * [LTO](labs/misc/lto)
-  * [PGO](labs/misc/pgo)
-  * [Optimize IO](labs/misc/io_opt1)
+  * [ ] [Warmup](labs/misc/warmup)
+  * [ ] [LTO](labs/misc/lto)
+  * [ ] [PGO](labs/misc/pgo)
+  * [ ] [Optimize IO](labs/misc/io_opt1)
 
 ## Support the project
 
