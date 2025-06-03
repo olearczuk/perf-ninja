@@ -37,3 +37,24 @@ Caveat: current benchmark processes 16k positions, which takes 192KB of space (`
     //  V2.4S will have four Z coordinates,
     // Reducing vectors with such a friendly layout is much easier.
     ```
+
+
+## Solution
+Actually, at the time of writing solution compilers manage to auto vectorize the code: `clang -O3 -c solution.cpp  -Rpass-analysis=loop-vectorize` doesn't show any loop not being vectorized.<br/>
+However, it's still possible to write faster code using intrinsics.<br/>
+Each `Position { uint32_t x, y, z; };` requires 96 bits - 4 such values can be loaded into 3 128-bit registers.<br/>
+All we need to do is to compute total sum for each register and then extract all `x`, `y` and `z` values from it.
+
+## Benchmark
+AVX2 based solution results in ~50% speedup compared to auto-vectorization.
+```bash
+Benchmark                   Time             CPU      Time Old      Time New       CPU Old       CPU New
+--------------------------------------------------------------------------------------------------------
+bench1                   -0.4944         -0.4945          5272          2665          5268          2663
+Benchmark                   Time             CPU      Time Old      Time New       CPU Old       CPU New
+--------------------------------------------------------------------------------------------------------
+bench1                   -0.4978         -0.4978          5295          2659          5290          2657
+Benchmark                   Time             CPU      Time Old      Time New       CPU Old       CPU New
+--------------------------------------------------------------------------------------------------------
+bench1                   -0.4961         -0.4961          5268          2655          5264          2652
+```
