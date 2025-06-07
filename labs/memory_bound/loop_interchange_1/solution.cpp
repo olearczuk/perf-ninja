@@ -1,5 +1,6 @@
 
 #include "solution.h"
+
 #include <memory>
 #include <string_view>
 
@@ -23,7 +24,7 @@ void identity(Matrix &result) {
 }
 
 // Multiply two square matrices
-void multiply(Matrix &result, const Matrix &a, const Matrix &b) {
+void multiplyOld(Matrix &result, const Matrix &a, const Matrix &b) {
   zero(result);
 
   for (int i = 0; i < N; i++) {
@@ -33,6 +34,28 @@ void multiply(Matrix &result, const Matrix &a, const Matrix &b) {
       }
     }
   }
+}
+
+// Multiply two square matrices.
+// Interchange loops to improve memory access patterns (compared to
+// multiplyOld).
+void multiplyNew(Matrix &result, const Matrix &a, const Matrix &b) {
+  zero(result);
+  for (int i = 0; i < N; i++) {
+    for (int k = 0; k < N; k++) {
+      for (int j = 0; j < N; j++) {
+        result[i][j] += a[i][k] * b[k][j];
+      }
+    }
+  }
+}
+
+void multiply(Matrix &result, const Matrix &a, const Matrix &b) {
+#ifdef SOLUTION
+  multiplyNew(result, a, b);
+#else
+  multiplyOld(result, a, b);
+#endif
 }
 
 // Compute integer power of a given square matrix
@@ -57,8 +80,7 @@ Matrix power(const Matrix &input, const uint32_t k) {
       std::swap(productNext, productCurrent);
 
       // Exit early to skip next squaring
-      if (i == 1)
-        break;
+      if (i == 1) break;
     }
 
     // Square an element
