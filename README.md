@@ -40,7 +40,7 @@ Lab assignments in this project are implemented in C++. Also, Performance Ninja 
   * [x] [Data Packing](labs/memory_bound/data_packing)
   * [x] [Loop Interchange 1](labs/memory_bound/loop_interchange_1)
   * [x] [Loop Interchange 2](labs/memory_bound/loop_interchange_2)
-  * [ ] [Loop Tiling](labs/memory_bound/loop_tiling_1)
+  * [x] [Loop Tiling](labs/memory_bound/loop_tiling_1)
   * [ ] [SW memory prefetching](labs/memory_bound/swmem_prefetch_1)
   * [ ] [False Sharing](labs/memory_bound/false_sharing_1)
   * [ ] [Huge Pages](labs/memory_bound/huge_pages_1)
