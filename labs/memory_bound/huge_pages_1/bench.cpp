@@ -50,7 +50,7 @@ static void bench1(benchmark::State &state) {
 }
 
 // Register the function as a benchmark and measure time in microseconds
-BENCHMARK(bench1)->Name("Apply matrix-free operator")->Unit(benchmark::kSecond);
+BENCHMARK(bench1)->Name("Apply matrix-free operator")->Unit(benchmark::kMillisecond);
 
 // Run the benchmark
 BENCHMARK_MAIN();

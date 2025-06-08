@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 
-#if defined(__linux__) || defined(__linux) || defined(linux) ||                \
+#if defined(__linux__) || defined(__linux) || defined(linux) || \
     defined(__gnu_linux__)
 #define ON_LINUX
 #elif defined(__APPLE__) && defined(__MACH__)
@@ -32,11 +32,10 @@
 #define UNICODE
 #define _UNICODE
 
-#include <windows.h>
-
 #include <Sddl.h>
 #include <ntsecapi.h>
 #include <ntstatus.h>
+#include <windows.h>
 
 // Based on
 // https://stackoverflow.com/questions/42354504/enable-large-pages-in-windows-programmatically
@@ -74,7 +73,7 @@ inline auto getUserToken() {
   // Probe the buffer size reqired for PTOKEN_USER structure
   DWORD dwbuf_sz = 0;
   if (!GetTokenInformation(proc_token.get(), TokenUser, nullptr, 0,
-                              &dwbuf_sz) &&
+                           &dwbuf_sz) &&
       (GetLastError() != ERROR_INSUFFICIENT_BUFFER))
     throw std::runtime_error{"GetTokenInformation failed"};
 
@@ -83,7 +82,7 @@ inline auto getUserToken() {
   PTOKEN_USER ptr = (PTOKEN_USER)malloc(dwbuf_sz);
   std::unique_ptr<TOKEN_USER, decltype(deleter)> user_token{ptr, deleter};
   if (!GetTokenInformation(proc_token.get(), TokenUser, user_token.get(),
-                              dwbuf_sz, &dwbuf_sz))
+                           dwbuf_sz, &dwbuf_sz))
     throw std::runtime_error{"GetTokenInformation failed"};
 
   return user_token;
@@ -114,11 +113,11 @@ inline bool enableProcPrivilege() {
   priv_token.Privileges->Attributes = SE_PRIVILEGE_ENABLED;
 
   if (!LookupPrivilegeValue(NULL, SE_LOCK_MEMORY_NAME,
-                               &priv_token.Privileges->Luid))
+                            &priv_token.Privileges->Luid))
     throw std::runtime_error{"LookupPrivilegeValue failed"};
 
-  if (!AdjustTokenPrivileges(proc_token.get(), FALSE, &priv_token, 0,
-                                nullptr, 0))
+  if (!AdjustTokenPrivileges(proc_token.get(), FALSE, &priv_token, 0, nullptr,
+                             0))
     throw std::runtime_error{"AdjustTokenPrivileges failed"};
 
   if (GetLastError() == ERROR_NOT_ALL_ASSIGNED)
@@ -126,7 +125,7 @@ inline bool enableProcPrivilege() {
   else
     return true;
 }
-} // namespace detail
+}  // namespace detail
 
 inline bool setRequiredPrivileges() {
   if (detail::enableProcPrivilege())
@@ -152,19 +151,27 @@ inline bool setRequiredPrivileges() {
 // Allocate an array of doubles of size `size`, return it as a
 // std::unique_ptr<double[], D>, where `D` is a custom deleter type
 inline auto allocateDoublesArray(size_t size) {
+#ifdef SOLUTION
+#define MAP_HUGE_2MB (21 << MAP_HUGE_SHIFT)
   // Allocate memory
-  double *alloc = new double[size];
-  // remember to cast the pointer to double* if your allocator returns void*
+  constexpr size_t huge_page_size = 2 * 1024 * 1024;  // 2MB huge pages
+  size_t alloc_size = size * sizeof(double);
+  // Round up to nearest huge page size
+  alloc_size = (alloc_size + huge_page_size - 1) & ~(huge_page_size - 1);
 
-  // Deleters can be conveniently defined as lambdas, but you can explicitly
-  // define a class if you're not comfortable with the syntax
-  auto deleter = [/* state = ... */](double *ptr) { delete[] ptr; };
+  void* ptr =
+      mmap(nullptr, alloc_size, PROT_READ | PROT_WRITE,
+           MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB | MAP_HUGE_2MB, -1, 0);
+  if (ptr == MAP_FAILED) {
+    throw std::runtime_error("Huge page allocation failed");
+  }
+  double* alloc = static_cast<double*>(ptr);
 
+  // Use munmap to deallocate the memory
+  auto deleter = [alloc_size](double* ptr) { munmap(ptr, alloc_size); };
   return std::unique_ptr<double[], decltype(deleter)>(alloc,
                                                       std::move(deleter));
-
-  // The above is equivalent to:
-  // return std::make_unique<double[]>(size);
-  // The more verbose version is meant to demonstrate the use of a custom
-  // (potentially stateful) deleter
+#else
+  return std::make_unique<double[]>(size);
+#endif
 }
