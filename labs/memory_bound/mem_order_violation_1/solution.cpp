@@ -1,20 +1,60 @@
 
 #include "solution.h"
-#include <algorithm>
-#include <fstream>
+
 #include <stdint.h>
+
+#include <algorithm>
 #include <cmath>
+#include <fstream>
 #include <ios>
+#include <numeric>
 
 // ******************************************
 // ONLY THE FOLLOWING FUNCTION IS BENCHMARKED
 // Compute the histogram of image pixels
+
+std::array<uint32_t, 256> computeHistogramNew(const GrayscaleImage& image) {
+  // Duplicating the arrays allows to get rid of memory order violations.
+  // Subsequent stores for the same pixel value will not overlap so the memory
+  // access is no longer sequential.
+  constexpr int UNROLL_FACTOR = 4;
+  std::array<std::array<uint32_t, UNROLL_FACTOR>, 256> hists;
+  for (int i = 0; i < hists.size(); ++i) {
+    hists[i].fill(0);
+  }
+
+  int total_pixels = image.width * image.height;
+  // main "unrolling" loop
+  int i = 0;
+  for (; i < total_pixels - UNROLL_FACTOR; i += UNROLL_FACTOR) {
+    for (int j = 0; j < UNROLL_FACTOR; ++j) {
+      ++hists[image.data[i + j]][j];
+    }
+  }
+
+  // finish the rest
+  for (; i < total_pixels; ++i) {
+    ++hists[image.data[i]][0];
+  }
+
+  std::array<uint32_t, 256> hist;
+  for (int i = 0; i < hist.size(); ++i) {
+    hist[i] = std::accumulate(hists[i].cbegin(), hists[i].cend(), 0);
+  }
+  return hist;
+}
+
 std::array<uint32_t, 256> computeHistogram(const GrayscaleImage& image) {
+#ifdef SOLUTION
+  return computeHistogramNew(image);
+#else
   std::array<uint32_t, 256> hist;
   hist.fill(0);
-  for (int i = 0; i < image.width * image.height; ++i)
+  for (int i = 0; i < image.width * image.height; ++i) {
     hist[image.data[i]]++;
+  }
   return hist;
+#endif
 }
 // ******************************************
 
@@ -22,8 +62,7 @@ std::array<uint32_t, 256> computeHistogram(const GrayscaleImage& image) {
 int calcOtsuThreshold(const std::array<uint32_t, 256>& hist, int totalPixels) {
   // normalize histogram
   std::array<double, 256> normHist;
-  for (int i = 0; i < 256; ++i)
-    normHist[i] = (double)hist[i] / totalPixels;
+  for (int i = 0; i < 256; ++i) normHist[i] = (double)hist[i] / totalPixels;
 
   double maxVariance = 0;
   int optimalThreshold = 0;
@@ -70,8 +109,8 @@ void applyOtsuThreshold(GrayscaleImage& image) {
 }
 
 // Loads GrayscaleImage image. Format is
-// https://people.sc.fsu.edu/~jburkardt/data/pgmb/pgmb.html 
-bool GrayscaleImage::load(const std::string &filename, const int maxSize) {
+// https://people.sc.fsu.edu/~jburkardt/data/pgmb/pgmb.html
+bool GrayscaleImage::load(const std::string& filename, const int maxSize) {
   data.reset();
 
   std::ifstream input(filename.data(),
@@ -86,8 +125,7 @@ bool GrayscaleImage::load(const std::string &filename, const int maxSize) {
       char c;
       input.unsetf(std::ios_base::skipws);
       input >> c;
-      if (c == '\r')
-        input >> c;
+      if (c == '\r') input >> c;
 
       if ((width > 0) && (width <= maxSize) && (height > 0) &&
           (height <= maxSize) && (amplitude >= 0) && (amplitude <= 255) &&
@@ -95,7 +133,7 @@ bool GrayscaleImage::load(const std::string &filename, const int maxSize) {
         size = static_cast<size_t>(width) * static_cast<size_t>(height);
         data.reset(new uint8_t[size]);
         if (data) {
-          input.read(reinterpret_cast<char *>(data.get()), size);
+          input.read(reinterpret_cast<char*>(data.get()), size);
           if (input.fail()) {
             data.reset();
           }
@@ -111,7 +149,7 @@ bool GrayscaleImage::load(const std::string &filename, const int maxSize) {
 
 // Saves GrayscaleImage image. Format is
 // https://people.sc.fsu.edu/~jburkardt/data/pgmb/pgmb.html
-void GrayscaleImage::save(const std::string &filename) {
+void GrayscaleImage::save(const std::string& filename) {
   std::ofstream output(filename.data(),
                        std::ios_base::out | std::ios_base::binary);
   if (output.is_open()) {
@@ -119,7 +157,7 @@ void GrayscaleImage::save(const std::string &filename) {
            << width << ' ' << height << std::endl
            << "255" << std::endl;
     if (data) {
-      output.write(reinterpret_cast<const char *>(data.get()), size);
+      output.write(reinterpret_cast<const char*>(data.get()), size);
     }
     output.close();
   }
