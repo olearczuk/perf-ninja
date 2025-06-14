@@ -47,7 +47,7 @@ Lab assignments in this project are implemented in C++. Also, Performance Ninja 
   * [x] [Memory Order Violation](labs/memory_bound/mem_order_violation_1)
   * [x] [Memory Alignment](labs/memory_bound/mem_alignment_1)
 * Bad Speculation:
-  * [ ] [Branches To CMOVs](labs/bad_speculation/branches_to_cmov_1)
+  * [x] [Branches To CMOVs](labs/bad_speculation/branches_to_cmov_1)
   * [ ] [Conditional Store](labs/bad_speculation/conditional_store_1)
   * [ ] [Replacing Branches With Lookup Tables](labs/bad_speculation/lookup_tables_1)
   * [ ] [C++ Virtual Calls](labs/bad_speculation/virtual_call_mispredict)
