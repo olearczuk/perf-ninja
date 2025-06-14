@@ -55,7 +55,6 @@ Lab assignments in this project are implemented in C++. Also, Performance Ninja 
 * Data-Driven optimizations:
 * Misc:
   * [ ] [LTO](labs/misc/lto)
-  * [ ] [PGO](labs/misc/pgo)
   * [ ] [Optimize IO](labs/misc/io_opt1)
 
 ## Support the project
