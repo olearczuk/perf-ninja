@@ -50,7 +50,7 @@ Lab assignments in this project are implemented in C++. Also, Performance Ninja 
   * [x] [Branches To CMOVs](labs/bad_speculation/branches_to_cmov_1)
   * [x] [Conditional Store](labs/bad_speculation/conditional_store_1)
   * [x] [Replacing Branches With Lookup Tables](labs/bad_speculation/lookup_tables_1)
-  * [ ] [C++ Virtual Calls](labs/bad_speculation/virtual_call_mispredict)
+  * [x] [C++ Virtual Calls](labs/bad_speculation/virtual_call_mispredict)
 * CPU Frontend Bound:
 * Data-Driven optimizations:
 * Misc:
