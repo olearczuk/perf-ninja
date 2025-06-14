@@ -1,16 +1,29 @@
 
 #include "solution.h"
+
+#include <cassert>
+#include <iostream>
 #include <random>
 
 // ******************************************
 // Change this function
 // ******************************************
-// This function allows you to change the number of columns in a matrix. 
+// This function allows you to change the number of columns in a matrix.
 // In other words, it defines how many elements are in each row.
 // hint: you need to allocate dummy columns to achieve proper data alignment.
-int n_columns(int N) {  
-  return N;
+#ifdef SOLUTION
+int n_columns(int N) {
+  // Add dummy columns to ensure that each row is aligned to a cache line.
+  constexpr int FLOATS_PER_CACHE_LINE = CACHELINE_SIZE / sizeof(float);
+  int res = (N + FLOATS_PER_CACHE_LINE - 1) / FLOATS_PER_CACHE_LINE *
+            FLOATS_PER_CACHE_LINE;
+  assert(res >= N);
+  assert((res * sizeof(float)) % CACHE_LINE_SIZE == 0);
+  return res;
 }
+#else
+int n_columns(int N) { return N; }
+#endif
 // ******************************************
 
 // DO NOT change any of the functions below.
@@ -19,46 +32,41 @@ int n_columns(int N) {
 // This is because these functions are prepared for matrices with aligned rows.
 // I.e. a matrix has N x N elements, but its actual dimensions are N x K since
 // it has padding. However, only N x N elements are used.
-void initRandom(Matrix &matrix, int N, int K) {
+void initRandom(Matrix& matrix, int N, int K) {
   std::default_random_engine generator;
   std::uniform_real_distribution<float> distribution(-0.95f, 0.95f);
   for (int i = 0; i < N; i++)
-    for (int j = 0; j < N; j++)
-      matrix[i * K + j] = distribution(generator);
+    for (int j = 0; j < N; j++) matrix[i * K + j] = distribution(generator);
 }
 
-void initZero(Matrix &matrix, int N, int K) {
+void initZero(Matrix& matrix, int N, int K) {
   for (int i = 0; i < N; i++)
-    for (int j = 0; j < N; j++)
-      matrix[i * K + j] = 0.0f;
+    for (int j = 0; j < N; j++) matrix[i * K + j] = 0.0f;
 }
 
-void copyFromMatrix(const Matrix &from, Matrix &to, int N, int K) {
+void copyFromMatrix(const Matrix& from, Matrix& to, int N, int K) {
   for (int i = 0; i < N; i++)
-    for (int j = 0; j < N; j++)
-      to[i * K + j] = from[i * N + j];
+    for (int j = 0; j < N; j++) to[i * K + j] = from[i * N + j];
 }
 
 // A simple GEMM. Use only for small matrices (up to 100 x 100)
-void interchanged_matmul(float* RESTRICT A, 
-                         float* RESTRICT B,
+void interchanged_matmul(float* RESTRICT A, float* RESTRICT B,
                          float* RESTRICT C, int N, int K) {
   for (int i = 0; i < N; ++i)
     for (int k = 0; k < N; ++k)
-      for (int j = 0; j < N; ++j)
-        C[i * K + j] += A[i * K + k] * B[k * K + j];
+      for (int j = 0; j < N; ++j) C[i * K + j] += A[i * K + k] * B[k * K + j];
 }
 
-// Here is a blocked version for larger matrix sizes (e.g. 512 x 512 and beyond).
-void blocked_matmul(float* RESTRICT A, 
-                    float* RESTRICT B,
-                    float* RESTRICT C, int N, int K) {
+// Here is a blocked version for larger matrix sizes (e.g. 512 x 512 and
+// beyond).
+void blocked_matmul(float* RESTRICT A, float* RESTRICT B, float* RESTRICT C,
+                    int N, int K) {
   constexpr int blockSize = 64;
   for (int ii = 0; ii < N; ii += blockSize)
     for (int kk = 0; kk < N; kk += blockSize)
       for (int jj = 0; jj < N; jj += blockSize)
         for (int i = ii; i < std::min(ii + blockSize, N); ++i)
           for (int k = kk; k < std::min(kk + blockSize, N); ++k)
-            for (int j = jj; j < std::min(jj + blockSize, N); ++j)                        
+            for (int j = jj; j < std::min(jj + blockSize, N); ++j)
               C[i * K + j] += A[i * K + k] * B[k * K + j];
 }
