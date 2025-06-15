@@ -54,7 +54,7 @@ Lab assignments in this project are implemented in C++. Also, Performance Ninja 
 * CPU Frontend Bound:
 * Data-Driven optimizations:
 * Misc:
-  * [ ] [Optimize IO](labs/misc/io_opt1)
+  * [x] [Optimize IO](labs/misc/io_opt1)
 
 ## Support the project
 
