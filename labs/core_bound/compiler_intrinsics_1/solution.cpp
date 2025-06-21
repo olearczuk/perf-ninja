@@ -17,8 +17,6 @@ std::pair<int, int> mainLoopSSE2(const InputVector& input, uint8_t radius,
     __m128i diff = _mm_sub_epi16(add, sub);
 
     // Prefix sum for 8 elements
-    // "Shift left" because __m128i stores values in reverse order.
-    // Index 0 is the last element, index 7 is the first element.
     diff = _mm_add_epi16(diff, _mm_slli_si128(diff, 1 * sizeof(uint16_t)));
     diff = _mm_add_epi16(diff, _mm_slli_si128(diff, 2 * sizeof(uint16_t)));
     diff = _mm_add_epi16(diff, _mm_slli_si128(diff, 4 * sizeof(uint16_t)));
@@ -58,8 +56,6 @@ std::pair<int, int> mainLoopAVX2(const InputVector& input, uint8_t radius,
     __m256i diff = _mm256_sub_epi16(add, sub);
 
     // Prefix sum for 16 elements
-    // "Shift left" because __m256i stores values in reverse order.
-    // Index 0 is the last element, index 15 is the first element.
     diff =
         _mm256_add_epi16(diff, _mm256_slli_si256(diff, 1 * sizeof(uint16_t)));
     diff =
